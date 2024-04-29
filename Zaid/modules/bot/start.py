@@ -9,7 +9,7 @@ from pyrogram import *
 from pyrogram.types import * 
 
 PHONE_NUMBER_TEXT = (
-    "✘ Heya My Master👋!\n\n✘ I'm Your Assistant?\n\n‣ I can help you to host Your Left Clients.\n\n‣ Repo: github.com/prashantsahlot/Zaid-Userbot \n\n‣ This specially for Buzzy People's(lazy)\n\n‣ Now /clone {send your PyroGram String Session}"
+    "hello user 💖 I am frozen ub!\n\n I can help you host your own userbot \n\n‣ powered by FROZENBOTS 💞 \n\n‣ for any help owner id -: @frozen_owner1 \n\n‣ This specially for Buzzy People's(lazy)\n\n‣ Now /clone {send your PyroGram String Session}"
 )
 
 @app.on_message(filters.command("start"))
@@ -41,6 +41,6 @@ async def clone(bot: app, msg: Message):
         client = Client(name="Melody", api_id=API_ID, api_hash=API_HASH, session_string=phone, plugins=dict(root="Zaid/modules"))
         await client.start()
         user = await client.get_me()
-        await msg.reply(f"ha ho gya chalu is name sa ha na {user.first_name} ✅.chal ab galdi sa @Frozensupport1 join karr la ")
+        await msg.reply(f"booting your own bot... {user.first_name} done ✅   ab @Frozensupport1 join karr la nahi tu dost na ha mara  ")
     except Exception as e:
         await msg.reply(f"**ERROR:** `{str(e)}`\nPress /start to Start again.")
