@@ -36,11 +36,11 @@ async def clone(bot: app, msg: Message):
     cmd = msg.command
     phone = msg.command[1]
     try:
-        await text.edit("wait booting your bot.... ")
+        await text.edit("wait booting your own userbot.... ")
                    # change this Directry according to ur repo
         client = Client(name="Melody", api_id=API_ID, api_hash=API_HASH, session_string=phone, plugins=dict(root="Zaid/modules"))
         await client.start()
         user = await client.get_me()
-        await msg.reply(f" done ✅ booted your bot!!{user.first_name}    ab @Frozensupport1 join karr la nahi tu dost na ha mara  ")
+        await msg.reply(f" sucessfully ✅ booted your own userbot!!{user.first_name}    ab @Frozensupport1 join karr la nahi to id ban karr du ga  ")
     except Exception as e:
         await msg.reply(f"**ERROR:** `{str(e)}`\nPress /start to Start again.")
