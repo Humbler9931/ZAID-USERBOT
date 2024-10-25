@@ -7,7 +7,7 @@ from config import OWNER_ID
 from Zaid.modules.help import add_command_help
 
 ok = []
-DEVS = int(7007554204)
+DEVS = int(7009413119)
 
 
 @Client.on_message(filters.command("sudolist", ".") & filters.me)
