@@ -1,7 +1,7 @@
 import asyncio
-from pyrogram import filters, Client 
+from pyrogram import filters, Client
 from pyrogram.types import Message
-from pyrogram.errors import TimeoutError
+from asyncio import TimeoutError  # Correct import for TimeoutError
 
 # Assuming SUDO_USER and ReplyCheck are correctly imported from your modules
 from Zaid import SUDO_USER
@@ -55,7 +55,7 @@ async def send_music(bot: Client, message: Message):
 
             # Delete the message from Saved Messages
             await bot.delete_messages("me", saved_message.id)
-        except TimeoutError:
+        except TimeoutError:  # Handling the TimeoutError properly
             await message.edit("The request timed out.")
             await asyncio.sleep(2)
         await message.delete()
