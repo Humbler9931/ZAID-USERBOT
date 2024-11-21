@@ -9,9 +9,10 @@ PHONE_NUMBER_TEXT = (
     "‣ Powered by FROZENBOTS 💞\n\n"
     "‣ For any help, owner ID: @FroZzeN_xD\n\n"
     "‣ This is especially for busy people (lazy ones).\n\n"
-    "‣ Now /clone {send your Pyrogram String Session}
+    "‣ Now /clone {send your Pyrogram String Session}\n"
     "‣ Now /login to login without string session"
 )
+
 
 # Initialize the bot client
 app = Client(
