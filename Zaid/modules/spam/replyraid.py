@@ -69,11 +69,11 @@ async def raid(xspam: Client, e: Message):
                return await e.reply_text("**Sorry !! i Can't Spam Here.**")
           ok = await xspam.get_users(Zaid[1])
           id = ok.id
-#          try:
-#              userz = await xspam.get_users(id)
-#          except:
-#              await e.reply(f"`404 : User Doesn't Exists In This Chat !`")
-#              return #remove # to enable this
+          try:
+              userz = await xspam.get_users(id)
+          except:
+              await e.reply(f"`404 : User Doesn't Exists In This Chat !`")
+              return #remove # to enable this
           if int(id) in VERIFIED_USERS:
                 text = f"Chal Chal baap Ko mat sikha"
                 await e.reply_text(text)
