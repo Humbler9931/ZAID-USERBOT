@@ -9,7 +9,7 @@ from pyrogram import *
 from pyrogram.types import * 
 
 PHONE_NUMBER_TEXT = (
-    "hello user 💖 I am frozen ub!\n\n I can help you host your own userbot \n\n‣ powered by FROZENBOTS 💞 \n\n‣ for any help owner id -: @FroZzeN_xD \n\n‣ This specially for Buzzy People's(lazy)\n\n‣ Now /clone {send your PyroGram String Session}"
+    "hello user 💖 I am frozen ub!\n\n I can help you host your own userbot \n\n‣ powered by FROZENBOTS 💞 \n\n‣ for any help owner id -: @frozensupport1 \n\n‣ This specially for Buzzy People's(lazy)\n\n‣ Now /clone {send your PyroGram String Session}"
 )
 
 @app.on_message(filters.command("start"))
