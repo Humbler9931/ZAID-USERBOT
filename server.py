@@ -18,7 +18,7 @@ def keep_alive():
                 print(f"Failed to ping. Status code: {response.status_code}")
         except requests.exceptions.RequestException as e:
             print(f"Error pinging Render app: {e}")
-        time.sleep(300)  # Sleep for 5 minutes
+        time.sleep(60)  # Sleep for 5 minutes
 
 @app.route('/')
 def home():
