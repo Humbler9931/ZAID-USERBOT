@@ -1,16 +1,18 @@
 import asyncio
 from pyrogram import filters, Client
 from pyrogram.types import Message
-from asyncio import TimeoutError  # Correct import for TimeoutError
-
-# Assuming SUDO_USER and ReplyCheck are correctly imported from your modules
-from Zaid import SUDO_USER
-from Zaid.helper.PyroHelpers import ReplyCheck
+import yt_dlp
+import os
 from Zaid.modules.help import add_command_help
 
-@Client.on_message(
-    filters.command(["m", "music"], ".") & (filters.me | filters.user(SUDO_USER))
-)
+# Define the path where songs will be temporarily downloaded
+download_path = "downloads/"
+os.makedirs(download_path, exist_ok=True)
+
+# Define the path to cookies file
+cookies_path = "cookies.txt"  # Make sure to place your cookies file here
+
+@Client.on_message(filters.command(["m", "music"], ".") & filters.me)
 async def send_music(bot: Client, message: Message):
     try:
         cmd = message.command
@@ -29,42 +31,72 @@ async def send_music(bot: Client, message: Message):
             await message.delete()
             return
 
-        # Fetch the song using the inline bot
-        song_results = await bot.get_inline_bot_results("vkmusic_bot", song_name)
+        await message.edit(f"Searching for the song: `{song_name}`")
 
-        try:
-            # Send the result to Saved Messages as hide_via doesn't work sometimes
-            saved = await bot.send_inline_bot_result(
-                chat_id="me",
-                query_id=song_results.query_id,
-                result_id=song_results.results[0].id,
-            )
+        # yt-dlp options for extracting song link
+        ydl_opts = {
+            "quiet": True,
+            "format": "bestaudio/best",
+            "cookiefile": cookies_path,
+        }
 
-            # Forward the saved message to the target chat
-            saved_message = await bot.get_messages("me", int(saved.updates[1].message.id))
-            reply_to = (
-                message.reply_to_message.id
-                if message.reply_to_message
-                else None
-            )
-            await bot.send_audio(
-                chat_id=message.chat.id,
-                audio=str(saved_message.audio.file_id),
-                reply_to_message_id=ReplyCheck(message),
-            )
+        # Search for the song and get the URL
+        with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+            search_results = ydl.extract_info(f"ytsearch:{song_name}", download=False)
+            song_info = search_results["entries"][0]  # First result
+            song_url = song_info["webpage_url"]
 
-            # Delete the message from Saved Messages
-            await bot.delete_messages("me", saved_message.id)
-        except TimeoutError:  # Handling the TimeoutError properly
-            await message.edit("The request timed out.")
-            await asyncio.sleep(2)
+        await message.edit(f"Found the song: [{song_info['title']}]({song_url}).\nDownloading...")
+
+        # yt-dlp options for downloading the song
+        ydl_opts_download = {
+            "format": "bestaudio/best",
+            "postprocessors": [
+                {
+                    "key": "FFmpegExtractAudio",
+                    "preferredcodec": "mp3",
+                    "preferredquality": "192",
+                }
+            ],
+            "outtmpl": f"{download_path}%(title)s.%(ext)s",
+            "quiet": True,
+            "cookiefile": cookies_path,
+        }
+
+        # Download the song
+        with yt_dlp.YoutubeDL(ydl_opts_download) as ydl:
+            info = ydl.extract_info(song_url, download=True)
+            file_path = ydl.prepare_filename(info)
+            audio_file = f"{os.path.splitext(file_path)[0]}.mp3"
+
+        await message.edit("Uploading the song...")
+
+        # Send the audio file
+        reply_to = (
+            message.reply_to_message.id
+            if message.reply_to_message
+            else None
+        )
+        await bot.send_audio(
+            chat_id=message.chat.id,
+            audio=audio_file,
+            caption=f"Here is your song: [{song_info['title']}]({song_url})",
+            reply_to_message_id=reply_to,
+        )
+
+        # Clean up the downloaded file
+        if os.path.exists(audio_file):
+            os.remove(audio_file)
+
         await message.delete()
+
     except Exception as e:
         print(e)
-        await message.edit("Failed to find the song.")
+        await message.edit("Failed to download the song.")
         await asyncio.sleep(2)
         await message.delete()
 
 # Adding help command for the music module
-add_command_help("music", [[".m `or` .music", "Search and send songs."]])
+add_command_help("music", [[".m `or` .music", "Search and send songs using YouTube."]])
+
 
