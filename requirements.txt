@@ -23,3 +23,5 @@ speedtest-cli==2.1.3
 tgcrypto 
 telegraph
 uwuify
+yt-dlp
+ffmpeg
