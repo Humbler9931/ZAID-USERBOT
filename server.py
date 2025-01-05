@@ -9,7 +9,8 @@ URLS_TO_PING = [
     "https://vcmusicuser.onrender.com/",
     "https://frozenvcmusic.onrender.com/",
     "https://save-restricted-content-bot-v2-n057.onrender.com/",
-    "https://fallenrobot-tjng.onrender.com/"  # New URL added
+    "https://fallenrobot-tjng.onrender.com/",  # New URL added previously
+    "https://vj-filter-bot-al0m.onrender.com/"  # New URL added now
 ]
 
 # Ping the Render apps every 5 minutes (300 seconds)
@@ -37,5 +38,6 @@ if __name__ == '__main__':
     
     # Start Flask app
     app.run(host="0.0.0.0", port=8000)
+
 
 
