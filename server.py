@@ -9,7 +9,7 @@ URLS_TO_PING = [
     "https://vcmusicuser.onrender.com/",
     "https://frozenvcmusic.onrender.com/",
     "https://save-restricted-content-bot-v2-n057.onrender.com/",
-    "https://fallenrobot-tjng.onrender.com/",  # New URL added previously
+    "https://fallenrobot-04y5.onrender.com",  # New URL added previously
     "https://vj-filter-bot-al0m.onrender.com/"  # New URL added now
 ]
 
