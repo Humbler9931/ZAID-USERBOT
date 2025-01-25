@@ -10,7 +10,7 @@ URLS_TO_PING = [
     "https://frozenvcmusic.onrender.com/",
     "https://jiosaavn-ll3p.onrender.com/",
     "https://fallenrobot-04y5.onrender.com",  # New URL added previously
-    "https://vj-filter-bot-al0m.onrender.com/"  # New URL added now
+    "https://frozen-youtube-api-search-link-ksog.onrender.com/"  # New URL added now
 ]
 
 # Ping the Render apps every 5 minutes (300 seconds)
