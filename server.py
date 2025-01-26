@@ -6,7 +6,7 @@ app = Flask(__name__)
 
 # URLs to ping
 URLS_TO_PING = [
-    "https://vcmusicuser-1emw.onrender.com/",
+    "https://vcmusicuser-xv2p.onrender.com/",
     "https://fallenrobot-04y5.onrender.com",  # New URL added previously
     "https://frozen-youtube-api-search-link-ksog.onrender.com/"  # New URL added now
 ]
