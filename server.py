@@ -1,41 +1,25 @@
+import os
 import time
-import requests
-from flask import Flask
+from flask import Flask, jsonify
+from flask_restful import Resource, Api
 
 app = Flask(__name__)
+api = Api(app)
 
-# URLs to ping
-URLS_TO_PING = [
-    "https://vcmusicuser-xv2p.onrender.com/",
-    "https://fallenrobot-04y5.onrender.com",  # New URL added previously
-    "https://frozen-youtube-api-search-link-ksog.onrender.com/"  # New URL added now
-]
+class Greeting(Resource):
+    def get(self):
+        return "Frozen is Up & Running!"
 
-# Ping the Render apps every 5 minutes (300 seconds)
-def keep_alive():
-    while True:
-        for url in URLS_TO_PING:
-            try:
-                response = requests.get(url)
-                if response.status_code == 200:
-                    print(f"Successfully pinged {url}!")
-                else:
-                    print(f"Failed to ping {url}. Status code: {response.status_code}")
-            except requests.exceptions.RequestException as e:
-                print(f"Error pinging {url}: {e}")
-        time.sleep(300)  # Sleep for 5 minutes
+class Ping(Resource):
+    def get(self):
+        start_time = time.time()
+        # You could add any processing logic here if needed
+        end_time = time.time()
+        response_time = end_time - start_time
+        return jsonify(message="pong", response_time=f"{response_time:.6f} seconds")
 
-@app.route('/')
-def home():
-    return "Flask app is running and pinging the Render apps!"
+api.add_resource(Greeting, '/')
+api.add_resource(Ping, '/ping')
 
-if __name__ == '__main__':
-    # Start the keep_alive function in a separate thread to keep the app alive
-    import threading
-    threading.Thread(target=keep_alive, daemon=True).start()
-    
-    # Start Flask app
-    app.run(host="0.0.0.0", port=8000)
-
-
-
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 8000)))
