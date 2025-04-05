@@ -5,12 +5,8 @@ from pyrogram import filters, Client
 from pyrogram.types import Message
 from Zaid.modules.help import add_command_help
 
-# Define the API URL for searching songs
-API_URL = "https://small-bush-de65.tenopno.workers.dev/search?title="
-
-# Define the path where songs will be temporarily downloaded
-download_path = "downloads/"
-os.makedirs(download_path, exist_ok=True)
+# Define the JioSaavn API URL for searching songs
+API_URL = "https://jiosaavn-api.lagendplayersyt.workers.dev/api/search/songs?query="
 
 @Client.on_message(filters.command(["m", "music"], ".") & filters.me)
 async def send_music(bot: Client, message: Message):
@@ -22,9 +18,7 @@ async def send_music(bot: Client, message: Message):
         if len(cmd) > 1:
             song_name = " ".join(cmd[1:])
         elif message.reply_to_message and len(cmd) == 1:
-            song_name = (
-                message.reply_to_message.text or message.reply_to_message.caption
-            )
+            song_name = message.reply_to_message.text or message.reply_to_message.caption
         elif not message.reply_to_message and len(cmd) == 1:
             await message.edit("Please provide a song name.")
             await asyncio.sleep(2)
@@ -33,14 +27,22 @@ async def send_music(bot: Client, message: Message):
 
         await message.edit(f"Searching for the song: `{song_name}`")
 
-        # Fetch the YouTube link using the API
+        # Fetch the song info using the JioSaavn API
         async with aiohttp.ClientSession() as session:
             async with session.get(f"{API_URL}{song_name}") as response:
                 if response.status == 200:
                     data = await response.json()
-                    song_url = data.get("link")
-                    song_title = data.get("title")
-                    song_duration = data.get("duration")
+                    results = data.get("data", {}).get("results", [])
+                    # Filter out songs where the language is "instrumental"
+                    valid_results = [song for song in results if song.get("language", "").lower() != "instrumental"]
+                    if not valid_results:
+                        await message.edit("No non-instrumental results found for the given song.")
+                        return
+                    # Select the first valid (non-instrumental) result
+                    chosen_song = valid_results[0]
+                    song_url = chosen_song.get("url")
+                    song_title = chosen_song.get("name")
+                    song_duration = chosen_song.get("duration")
                 else:
                     await message.edit("Failed to fetch song information.")
                     return
@@ -49,15 +51,15 @@ async def send_music(bot: Client, message: Message):
             await message.edit("No results found for the given song.")
             return
 
-        await message.edit(f"Found the song: `{song_title}` ({song_duration}).\nDownloading...")
+        await message.edit(f"Found the song: `{song_title}` ({song_duration}).\nForwarding for download...")
 
-        # Forward URL to the bot for downloading
-        forwarded_message = await bot.send_message("@YoutubeAudioDownloadBot", song_url)
+        # Forward the song URL to the downloader bot
+        forwarded_message = await bot.send_message("@songdownloderfrozenbot", song_url)
 
-        # Wait for the bot to respond with the audio file
+        # Wait for the downloader bot to respond with the audio file
         bot_response = None
         for _ in range(10):  # Retry for up to 10 iterations
-            async for response in bot.get_chat_history("@YoutubeAudioDownloadBot", limit=10):
+            async for response in bot.get_chat_history("@songdownloderfrozenbot", limit=10):
                 if response.audio:  # Check if the message contains an audio file
                     bot_response = response
                     break
@@ -70,43 +72,33 @@ async def send_music(bot: Client, message: Message):
             await forwarded_message.delete()
             return
 
-        # Download the audio file locally
-        audio_file_path = await bot_response.download(file_name=download_path)
+        await message.edit("Forwarding the song...")
 
-        # Clean up forwarded messages
+        # Forward the received audio message directly to the current chat
+        reply_to = message.reply_to_message.id if message.reply_to_message else None
+        await bot.forward_messages(
+            chat_id=message.chat.id,
+            from_chat_id="@songdownloderfrozenbot",
+            message_ids=bot_response.message_id,
+            reply_to_message_id=reply_to,
+        )
+
+        # Optionally clean up the temporary messages
         await asyncio.gather(
             forwarded_message.delete(),
             bot_response.delete(),
         )
 
-        await message.edit("Uploading the song...")
-
-        # Send the downloaded audio file
-        reply_to = (
-            message.reply_to_message.id
-            if message.reply_to_message
-            else None
-        )
-        await bot.send_audio(
-            chat_id=message.chat.id,
-            audio=audio_file_path,
-            caption=f"Here is your song: `{song_title}` ({song_duration})",
-            reply_to_message_id=reply_to,
-        )
-
-        # Clean up the downloaded file
-        if os.path.exists(audio_file_path):
-            os.remove(audio_file_path)
-
         await message.delete()
 
     except Exception as e:
         print(e)
-        await message.edit("Failed to download the song.")
+        await message.edit("Failed to forward the song.")
         await asyncio.sleep(2)
         await message.delete()
 
 # Adding help command for the music module
-add_command_help("music", [[".m `or` .music", "Search and send songs using YouTube."]])
+add_command_help("music", [[".m `or` .music", "Search and forward songs using JioSaavn."]])
+
 
 
