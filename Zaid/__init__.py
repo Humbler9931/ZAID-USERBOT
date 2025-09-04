@@ -24,12 +24,12 @@ if OWNER_ID not in SUDO_USERS:
 
 # Default API_ID and API_HASH
 if not API_ID:
-    print("WARNING: API ID NOT FOUND. USING DEFAULT Frozen API ⚡")
-    API_ID = "6435225"
+    print("WARNING:  TEAMRAJ API ⚡")
+    API_ID = "22528639"
 
 if not API_HASH:
-    print("WARNING: API HASH NOT FOUND. USING DEFAULT Frozen API ⚡")
-    API_HASH = "4e984ea35f854762dcde906dce426c2d"
+    print("WARNING:TEAMRAJ API ⚡")
+    API_HASH = "43df9dcf764afd03a1fd1dc3cec68bbd"
 
 if not BOT_TOKEN:
     print("ERROR: BOT TOKEN NOT FOUND. PLEASE ADD IT! ⚡")
